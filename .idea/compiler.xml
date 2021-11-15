@@ -7,6 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="Maths" />
+        <module name="Y12Ass1" />
       </profile>
     </annotationProcessing>
   </component>

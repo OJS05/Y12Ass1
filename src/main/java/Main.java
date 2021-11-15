@@ -7,10 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -52,6 +49,44 @@ public class Main {
         return entries;
     }
 
+    public static String getContinentalAverage(HashMap<String, String> map, String key){
+        return String.valueOf(map.get(key));
+    }
+
+    public static String imputateMean(float[] entries, String key, Continent continent) throws FileNotFoundException {
+        double total = 0;
+        int n = 0;
+        for (int i = 0; i < entries.length; i++) {
+            if (entries[i] != 0.0f) {
+                total += entries[i];
+                n += 1;
+            }else{
+                total += Float.parseFloat(getContinentalAverage(averageByContinent(continent), key));
+            }
+        }
+
+
+        return String.valueOf((float) total / n);
+    }
+
+    public static String imputateMean(int[] entries, String key, Continent continent) throws FileNotFoundException {
+
+        int total = 0;
+        int n = 0;
+
+        for (int i = 0; i < entries.length; i++) {
+            if (entries[i] != 0) {
+                total += entries[i];
+                n += 1;
+            }else{
+                total += Integer.parseInt(getContinentalAverage(averageByContinent(continent), key));
+                n += 1;
+            }
+        }
+
+        return String.valueOf(total/n);
+    }
+
     public static String calculateMean(float[] entries) {
         try {
             double x = 0;
@@ -84,23 +119,43 @@ public class Main {
         }
     }
 
-    public static int calculateMedian(int[] entries) {
+    public static String imputateMedian(int[] entries, String key, Continent continent) throws FileNotFoundException {
         int n = entries.length;
         Arrays.sort(entries);
         if (n % 2 == 0) {
-            return (entries[n / 2] + entries[n / 2 + 1]) / 2;
+            return String.valueOf((entries[n/2] + entries[n/2 - 1])/2);
         }else{
-            return entries[n / 2];
+            return String.valueOf(entries[n/2]);
         }
     }
 
-    public static float calculateMedian(float[] entries) {
+    public static String imputateMedian(float[] entries, String key, Continent continent) throws FileNotFoundException {
         int n = entries.length;
         Arrays.sort(entries);
         if (n % 2 == 0) {
-            return (entries[n / 2] + entries[n / 2 + 1]) / 2;
+            return String.valueOf((entries[n/2] + entries[n/2 - 1])/2);
         }else{
-            return entries[n / 2];
+            return String.valueOf(entries[n/2]);
+        }
+    }
+
+    public static String calculateMedian(int[] entries) {
+        int n = entries.length;
+        Arrays.sort(entries);
+        if (n % 2 == 0) {
+            return String.valueOf((entries[n / 2] + entries[n / 2 + 1]) / 2);
+        }else{
+            return String.valueOf(entries[n / 2]);
+        }
+    }
+
+    public static String calculateMedian(float[] entries) {
+        int n = entries.length;
+        Arrays.sort(entries);
+        if (n % 2 == 0) {
+            return String.valueOf((entries[n / 2] + entries[n / 2 + 1]) / 2);
+        }else{
+            return String.valueOf(entries[n / 2]);
         }
     }
 
@@ -154,7 +209,7 @@ public class Main {
 
     }
 
-    public static void analyse(List<Entry> entries) {
+    public static void analyse(List<Entry> entries) throws FileNotFoundException {
         var lists = splitByContinent(entries);
 
         int totalIndex = 0;
@@ -187,6 +242,7 @@ public class Main {
             float[] lifeExpectancyAtBirthMale = new float[list.size()];
             float[] lifeExpectancyAtBirthFemale = new float[list.size()];
             float[] totalFertilityRate = new float[list.size()];
+            String[] countriesQueried = new String[list.size()];
 
             for (Entry entry : list) {
                 continent = entry.continent;
@@ -202,6 +258,7 @@ public class Main {
                 lifeExpectancyAtBirthMale[i] = entry.lifeExpectancyMale;
                 lifeExpectancyAtBirthFemale[i] = entry.lifeExpectancyFemale;
                 totalFertilityRate[i] = entry.totalFertilityRate;
+                countriesQueried[i] = entry.country;
                 i++;
             }
 
@@ -220,31 +277,32 @@ public class Main {
             totalIndex++;
 
             System.out.println("Continent: " + continent);
-            System.out.println("x̄ GDP: " + calculateMean(gdp));
-            System.out.println("x̃ GDP: " + calculateMedian(gdp));
-            System.out.println("x̄ GNI: " + calculateMean(gni));
-            System.out.println("x̃ GNI: " + calculateMedian(gni));
-            System.out.println("x̄ Live births number: " + calculateMean(liveBirthsNumber));
-            System.out.println("x̃ Live births number: " + calculateMedian(liveBirthsNumber));
-            System.out.println("x̄ Live births rate: " + calculateMean(liveBirthsRate));
-            System.out.println("x̃ Live births rate: " + calculateMedian(liveBirthsRate));
-            System.out.println("x̄ Deaths number: " + calculateMean(deathsNumber));
-            System.out.println("x̃ Deaths number: " + calculateMedian(deathsNumber));
-            System.out.println("x̄ Deaths rate: " + calculateMean(deathsRate));
-            System.out.println("x̃ Deaths rate: " + calculateMedian(deathsRate));
-            System.out.println("x̄ Rate of increase: " + calculateMean(rateOfIncrease));
-            System.out.println("x̃ Rate of increase: " + calculateMedian(rateOfIncrease));
-            System.out.println("x̄ Infant deaths number: " + calculateMean(infantDeathsNumber));
-            System.out.println("x̃ Infant deaths number: " + calculateMedian(infantDeathsNumber));
-            System.out.println("x̄ Infant deaths rate: " + calculateMean(infantDeathsRate));
-            System.out.println("x̃ Infant deaths rate: " + calculateMedian(infantDeathsRate));
-            System.out.println("x̄ Life expectancy at birth male: " + calculateMean(lifeExpectancyAtBirthMale));
-            System.out.println("x̃ Life expectancy at birth male: " + calculateMedian(lifeExpectancyAtBirthMale));
-            System.out.println("x̄ Life expectancy at birth female: " + calculateMean(lifeExpectancyAtBirthFemale));
-            System.out.println("x̃ Life expectancy at birth female: " + calculateMedian(lifeExpectancyAtBirthFemale));
-            System.out.println("x̄ Total fertility rate: " + calculateMean(totalFertilityRate));
-            System.out.println("x̃ Total fertility rate: " + calculateMedian(totalFertilityRate));
+            System.out.println("x̄ GDP: " + imputateMean(gdp, "gdp", continent));
+            System.out.println("x̃ GDP: " + imputateMedian(gdp, "gdp", continent));
+            System.out.println("x̄ GNI: " + imputateMean(gni, "gni", continent));
+            System.out.println("x̃ GNI: " + imputateMedian(gni, "gni", continent));
+            System.out.println("x̄ Live births number: " + imputateMean(liveBirthsNumber, "liveBirthsNumber", continent));
+            System.out.println("x̃ Live births number: " + imputateMedian(liveBirthsNumber, "liveBirthsNumber", continent));
+            System.out.println("x̄ Live births rate: " + imputateMean(liveBirthsRate, "liveBirthsRate", continent));
+            System.out.println("x̃ Live births rate: " + imputateMedian(liveBirthsRate, "liveBirthsRate", continent));
+            System.out.println("x̄ Deaths number: " + imputateMean(deathsNumber, "deathsNumber", continent));
+            System.out.println("x̃ Deaths number: " + imputateMedian(deathsNumber, "deathsNumber", continent));
+            System.out.println("x̄ Deaths rate: " + imputateMean(deathsRate, "deathRate", continent));
+            System.out.println("x̃ Deaths rate: " + imputateMedian(deathsRate, "deathRate", continent));
+            System.out.println("x̄ Rate of increase: " + imputateMean(rateOfIncrease, "rateOfIncrease", continent));
+            System.out.println("x̃ Rate of increase: " + imputateMedian(rateOfIncrease, "rateOfIncrease", continent));
+            System.out.println("x̄ Infant deaths number: " + imputateMean(infantDeathsNumber, "infantDeathsNumber", continent));
+            System.out.println("x̃ Infant deaths number: " + imputateMedian(infantDeathsNumber, "infantDeathsNumber", continent));
+            System.out.println("x̄ Infant deaths rate: " + imputateMean(infantDeathsRate, "infantDeathsRate", continent));
+            System.out.println("x̃ Infant deaths rate: " + imputateMedian(infantDeathsRate, "infantDeathsRate", continent));
+            System.out.println("x̄ Life expectancy at birth male: " + imputateMean(lifeExpectancyAtBirthMale, "lifeExpectancyAtBirthMale", continent));
+            System.out.println("x̃ Life expectancy at birth male: " + imputateMedian(lifeExpectancyAtBirthMale, "lifeExpectancyAtBirthMale", continent));
+            System.out.println("x̄ Life expectancy at birth female: " + imputateMean(lifeExpectancyAtBirthFemale, "lifeExpectancyAtBirthFemale", continent));
+            System.out.println("x̃ Life expectancy at birth female: " + imputateMedian(lifeExpectancyAtBirthFemale, "lifeExpectancyAtBirthFemale", continent));
+            System.out.println("x̄ Total fertility rate: " + imputateMean(totalFertilityRate, "totalFertilityRate", continent));
+            System.out.println("x̃ Total fertility rate: " + imputateMedian(totalFertilityRate, "totalFertilityRate", continent));
             System.out.println("Number of countries analysed: " + i);
+            System.out.println("Countries queried: " + Arrays.toString(countriesQueried));
             System.out.println("\n");
         }
 
@@ -308,6 +366,124 @@ public class Main {
         result.add(northAmerica);
         result.add(southAmerica);
         result.add(oceania);
+
+        return result;
+    }
+
+    public static HashMap<String, String> averageByContinent(Continent continent) throws FileNotFoundException {
+        List<Entry> totalEntries = readFile(CSV_FILE_PATH);
+        List<Entry> entries = new ArrayList<>();
+
+        for (Entry entry : totalEntries) {
+            if(entry.continent == continent) {
+                entries.add(entry);
+            }
+        }
+
+        HashMap<String, String> result = new HashMap<>();
+
+        int[] gdp = new int[entries.size()];
+        int[] gni = new int[entries.size()];
+        int[] liveBirthsNumber = new int[entries.size()];
+        float[] liveBirthsRate = new float[entries.size()];
+        int[] deathsNumber = new int[entries.size()];
+        float[] deathsRate = new float[entries.size()];
+        float[] rateOfIncrease = new float[entries.size()];
+        int[] infantDeathsNumber = new int[entries.size()];
+        float[] infantDeathsRate = new float[entries.size()];
+        float[] lifeExpectancyAtBirthMale = new float[entries.size()];
+        float[] lifeExpectancyAtBirthFemale = new float[entries.size()];
+        float[] totalFertilityRate = new float[entries.size()];
+
+        int i = 0;
+
+        for (Entry entry : entries) {
+            gdp[i] = entry.gdp;
+            gni[i] = entry.gni;
+            liveBirthsNumber[i] = entry.liveBirthsNumber;
+            liveBirthsRate[i] = entry.liveBirthsRate;
+            deathsNumber[i] = entry.deathsNumber;
+            deathsRate[i] = entry.deathRate;
+            rateOfIncrease[i] = entry.rateOfIncrease;
+            infantDeathsNumber[i] = entry.infantDeathsNumber;
+            infantDeathsRate[i] = entry.infantDeathsRate;
+            lifeExpectancyAtBirthMale[i] = entry.lifeExpectancyMale;
+            lifeExpectancyAtBirthFemale[i] = entry.lifeExpectancyFemale;
+            totalFertilityRate[i] = entry.totalFertilityRate;
+            i++;
+        }
+
+        result.put("gdp", calculateMean(gdp));
+        result.put("gni", calculateMean(gni));
+        result.put("liveBirthsNumber", calculateMean(liveBirthsNumber));
+        result.put("liveBirthsRate", calculateMean(liveBirthsRate));
+        result.put("deathsNumber", calculateMean(deathsNumber));
+        result.put("deathRate", calculateMean(deathsRate));
+        result.put("rateOfIncrease", calculateMean(rateOfIncrease));
+        result.put("infantDeathsNumber", calculateMean(infantDeathsNumber));
+        result.put("infantDeathsRate", calculateMean(infantDeathsRate));
+        result.put("lifeExpectancyAtBirthMale", calculateMean(lifeExpectancyAtBirthMale));
+        result.put("lifeExpectancyAtBirthFemale", calculateMean(lifeExpectancyAtBirthFemale));
+        result.put("totalFertilityRate", calculateMean(totalFertilityRate));
+
+        return result;
+    }
+
+    public static HashMap<String, String> medianByContinent(Continent continent) throws FileNotFoundException {
+        List<Entry> totalEntries = readFile(CSV_FILE_PATH);
+        List<Entry> entries = new ArrayList<>();
+
+        for (Entry entry : totalEntries) {
+            if(entry.continent == continent) {
+                entries.add(entry);
+            }
+        }
+
+        HashMap<String, String> result = new HashMap<>();
+
+        int[] gdp = new int[entries.size()];
+        int[] gni = new int[entries.size()];
+        int[] liveBirthsNumber = new int[entries.size()];
+        float[] liveBirthsRate = new float[entries.size()];
+        int[] deathsNumber = new int[entries.size()];
+        float[] deathsRate = new float[entries.size()];
+        float[] rateOfIncrease = new float[entries.size()];
+        int[] infantDeathsNumber = new int[entries.size()];
+        float[] infantDeathsRate = new float[entries.size()];
+        float[] lifeExpectancyAtBirthMale = new float[entries.size()];
+        float[] lifeExpectancyAtBirthFemale = new float[entries.size()];
+        float[] totalFertilityRate = new float[entries.size()];
+
+        int i = 0;
+
+        for (Entry entry: entries) {
+            gdp[i] = entry.gdp;
+            gni[i] = entry.gni;
+            liveBirthsNumber[i] = entry.liveBirthsNumber;
+            liveBirthsRate[i] = entry.liveBirthsRate;
+            deathsNumber[i] = entry.deathsNumber;
+            deathsRate[i] = entry.deathRate;
+            rateOfIncrease[i] = entry.rateOfIncrease;
+            infantDeathsNumber[i] = entry.infantDeathsNumber;
+            infantDeathsRate[i] = entry.infantDeathsRate;
+            lifeExpectancyAtBirthMale[i] = entry.lifeExpectancyMale;
+            lifeExpectancyAtBirthFemale[i] = entry.lifeExpectancyFemale;
+            totalFertilityRate[i] = entry.totalFertilityRate;
+            i++;
+        }
+
+        result.put("gdp", calculateMedian(gdp));
+        result.put("gni", calculateMedian(gni));
+        result.put("liveBirthsNumber", calculateMedian(liveBirthsNumber));
+        result.put("liveBirthsRate", calculateMedian(liveBirthsRate));
+        result.put("deathsNumber", calculateMedian(deathsNumber));
+        result.put("deathRate", calculateMedian(deathsRate));
+        result.put("rateOfIncrease", calculateMedian(rateOfIncrease));
+        result.put("infantDeathsNumber", calculateMedian(infantDeathsNumber));
+        result.put("infantDeathsRate", calculateMedian(infantDeathsRate));
+        result.put("lifeExpectancyAtBirthMale", calculateMedian(lifeExpectancyAtBirthMale));
+        result.put("lifeExpectancyAtBirthFemale", calculateMedian(lifeExpectancyAtBirthFemale));
+        result.put("totalFertilityRate", calculateMedian(totalFertilityRate));
 
         return result;
     }
